@@ -3,9 +3,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 
 export default function App() {
 
-
     const [buttontitle, setButtontitle] = useState('Press the button below');
-    
 
     const handlePress = () => {
     console.log('Button pressed');
