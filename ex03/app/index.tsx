@@ -64,16 +64,21 @@ const isMultiple = (str:string) => {
 }
 
 
-
 const calucationOfSub= (str : string[]) : number =>
 {
-  let i = 0
-  let cumule = executeOperation( JSON.parse(str[0]), str[1] ,  JSON.parse(str[2]))
+  let i = 2
 
-  while(i + 3 <= length)
+  if (str.length === 1)
+    return JSON.parse(str[0])
+
+  let cumule = executeOperation( JSON.parse(str[0]), str[1] ,  JSON.parse(str[2]))
+  let length = str.length
+
+  while(i + 1 < length)
   {
+   
+    cumule = executeOperation( cumule, str[i +1 ] ,  JSON.parse(str[i + 2] ))
     i = i +2
-    cumule = executeOperation( cumule, str[i -1 ] ,  JSON.parse(str[i] ))
   }
   return cumule
 } 
@@ -91,63 +96,130 @@ const generateCalculation = (str : string[]) :   number =>
    let result = 0
    let tmpResult = 0
    let j = 0
-  while( i < length )
+
+  while( i < length  )
   {
 
-      console.log(i)
+     
+    console.log(operation.includes(str[i]) , str[i] , i)
     
-    if (i === 0 || operation.includes(str[i]) )
-      subOperator = str[i]  
-
-    if(operation.includes(str[i]))
+    if (i === 0 && number.includes(str[i][0]))
     {
 
-      OperationType = str[i]
+      subOperator = '+'
+      console.log("passe here 1" , subOperator , i)
+
+    }
+    else if (i === 0  && operation.includes(str[i]))
+    {
+      subOperator = str[i]
+      console.log("passe here 2" , subOperator , i)
+
+    }
+    
+//1+1+2*3
+//01234
+//--3   
+
+
+//1+2*4 // haDEL
+//
+//1+1+1
+//1*2+2+2 * 1
+//1+12
+
+//1*2+4
+//10*10 + 20 *20
+
+
+     if(operation.includes(str[i]))
+    {
+      OperationType= str[i]
+      if ( i === j && i + 2 < length && !isMultiple(OperationType) &&  isMultiple(str[i + 2]) )
+      {
+        OperationType= str[i + 2]
+      }
+     
+      
       if(!isMultiple(OperationType) )
       {
-        while(i < length &&  (!isMultiple(OperationType) || number.includes(str[i])))
+        console.log("!notisMultiple")
+        if( isMultiple(str[i]) || number.includes(str[i][0]))
+          {
+            i++
+            j++
+          }
+        while(i < length &&  (!isMultiple(str[i]) || number.includes(str[i][0])))
           i++
+        console.log("aftre while i = " , i ,"lenght =" , length , "j =" ,j)
+
         if(i === length)
         {
+          if(i - j === 2)
+            j++
           sub = str.slice(j , i)
+        
+
           tmpResult = calucationOfSub(sub)
+         
+
           result = executeOperation(result , subOperator,tmpResult )
           break 
         }
-        else if (isMultiple(OperationType))
+        else if (isMultiple(str[i]))
         {
           sub = str.slice(j , i - 2)
           tmpResult = calucationOfSub(sub)
           result = executeOperation(result , subOperator,tmpResult )
           i = i -2
+          subOperator = str[i]
           j = i
         }
         
       }
       else
-      if(i < length &&  !isMultiple(OperationType) )
+      if(i < length &&  isMultiple(OperationType) )
         {
-          while(isMultiple(OperationType) || number.includes(str[i]))
+          console.log("!isMultiplezzzzzzzzzzz")
+          if( !isMultiple(str[i]) || number.includes(str[i][0]))
+          {
             i++
+            j++
+          }
+          while(i < length && ( isMultiple(str[i]) || number.includes(str[i][0])))
+            i++
+          console.log("aftre while i = " , i ,"lenght =" , length , "j =" ,j)
+
           if (i === length )
           {
+
+            // console.log("entre to sbu i = " , i ,"lenght =" , length , "j =" ,j)
             sub = str.slice(j , i)
             tmpResult = calucationOfSub(sub)
             result = executeOperation(result , subOperator,tmpResult )
             break
 
           }
-          if(!isMultiple(OperationType))
+          if(i === j)
           {
+
+            subOperator = str[i+ 2]
+          }
+          else if(!isMultiple(str[i]))
+          {
+
             sub = str.slice(j , i)
             tmpResult = calucationOfSub(sub)
+            subOperator = str[i]
             result = executeOperation(result , subOperator,tmpResult )
             j = i
           }
+          
            
         }
-    }
-    
+      }
+      else 
+        i++
   }
     return result
 }
@@ -192,14 +264,18 @@ export default function Index() {
         {
           let last = newTokens[length -1]
           if (operation.includes(last)) {
-            if(inputTostring === '.')
+            if(inputTostring === '.' || length )
               newTokens.push('0.');
             else
             newTokens.push(inputTostring);
           } else if ( number.includes(last[0])) {
             if ( inputTostring === '.'  &&   (last.includes('.'))) // err
             {
-              return prev   
+              return prev
+            }
+            else if (last.length === 1 && last === '0' )
+            {
+              last = inputTostring
             }
 
             let newNumber = last + inputTostring;
@@ -210,11 +286,16 @@ export default function Index() {
       });
     }
 
+
+
+
+
+
     else if (operation.includes(inputTostring)) {
       setToken((prev) => {
         const length = prev.length;
         const newTokens = [...prev]; 
-        if (length === 0) { //err
+        if (length === 0  ) { //err
           return prev
         } 
         else
@@ -231,7 +312,12 @@ export default function Index() {
     }
  
         else if(inputTostring === 'AC')
-          setToken([])
+          setToken(['0'])
+
+
+
+
+
 
         else if (inputTostring === 'C')
           setToken((prev) => {
@@ -239,22 +325,42 @@ export default function Index() {
             const length = prev.length
 
             if(length === 0 ) 
-            return prev
+            return ['0']
           else
           {
-              let last = newTokens[length - 1]
+            let last = newTokens[length - 1]
+            if(length === 1 )
+            {
+              if(operation.includes(last[0]))
+              {
+                newTokens.pop()
+                newTokens.push("0")
+              }
+              else
+              {
+                if( number.includes(last[0]))
+                  {
+                    newTokens[length - 1] = last.substring(0 ,length - 1 )
+                    if (newTokens[length - 1] === "")
+                      newTokens[length - 1] = '0'
+                  }
+              }
+            }
+            else
+            {
               if(operation.includes(last[0]))
                 newTokens.pop()
               if( number.includes(last[0]))
               {
-                newTokens[length - 1] = last.slice(0,-1)
+                newTokens[length - 1] = last.substring(0 ,length - 1 )
+                    if (newTokens[length - 1] === "")
+                      newTokens[length - 1] = '0'
               }
+            }
             }
            
             return newTokens
           } )
-
-
 
           else if (inputTostring === '=')
           {
