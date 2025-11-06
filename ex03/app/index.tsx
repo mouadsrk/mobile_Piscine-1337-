@@ -115,13 +115,11 @@ export default function Index() {
         else if (inputTostring === 'C')
           setToken((prev) => {
               prev  = prev.substring(0 , prev.length - 1)
-            console.log(prev)
             return prev
           } )
           else if (inputTostring === '=')
           {
               try {
-                console.log("token" , token)
                const  tmpresult = calc (token).toString() 
                setToken(tmpresult)
                setResult(tmpresult)
