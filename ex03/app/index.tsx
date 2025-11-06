@@ -21,12 +21,12 @@ const calc = (s : string) => Function(`return(${s})`)();
 
 export default function Index() {
 
-   const [result , setResult] = useState(0);
+   const [result , setResult] = useState <string | number>(0);
   const [token , setToken] = useState<(string )>('0');
   const HandelonPress =(input :  string | number) => 
   {
     const inputTostring = input.toString()
-
+    setResult('')
     if (number.includes(inputTostring.toString())) {
       setToken((prev) => {
 
@@ -82,11 +82,8 @@ export default function Index() {
         }   
       else if(operation.includes(prev[prev.length - 1]))
       {
-        console.log("prev" ,prev)
        
-        console.log("inputTostring" ,inputTostring)
         const tmp = prev.substring(0 , prev.length - 1) +inputTostring
-        console.log("tmp" ,tmp)
 
         if( operation.includes(tmp[tmp.length - 1])&& prev.length === 1 )
         {
@@ -123,34 +120,27 @@ export default function Index() {
           } )
           else if (inputTostring === '=')
           {
-            setToken((prev) => {
-                try {
-                  console.log("result" , calc (prev) )
-                  return calc (prev).toString()    
-                } catch (error ) {
-                  console.log("passe here 1")
-                    if(ToastAndroid !== undefined)
-                    {
-                      console.log("passe here 2")
-                      ToastAndroid.showWithGravityAndOffset(
-                        JSON.stringify(`${error}`) ,
-                        ToastAndroid.SHORT,
-                        ToastAndroid.BOTTOM,
-                        25,
-                        50,);   
-                    }
-                    else
-                      {
-                        console.log("passe here 3")
+              try {
+                console.log("token" , token)
+               const  tmpresult = calc (token).toString() 
+               setToken(tmpresult)
+               setResult(tmpresult)
 
-                        Alert.alert(`${error}`) // iOS fallback
-                      }
-                      console.log("passe here 4")
-                    console.log("result" , prev)
-                  return  prev 
-    
-                }
-            });
+              } catch (error) {
+                if(ToastAndroid !== undefined)
+                  {
+                    ToastAndroid.showWithGravityAndOffset(
+                      JSON.stringify(`${error}`) ,
+                      ToastAndroid.SHORT,
+                      ToastAndroid.BOTTOM,
+                      25,
+                      50,);   
+                  }
+                  else
+                    {
+                      Alert.alert(`${error}`) // iOS fallback
+                    }
+              }
           }
   }
   return (
@@ -166,7 +156,7 @@ export default function Index() {
             style={styles.result}
             >
             <Text style={styles.resultText} >{token || ' '}</Text>
-            <Text style={styles.resultText}>0</Text>
+            <Text style={styles.resultText}>{result}</Text>
           </View>
           
           <View  style={styles.flateListHeader}>
