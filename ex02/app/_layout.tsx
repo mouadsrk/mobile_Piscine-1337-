@@ -6,7 +6,7 @@ export default function RootLayout() {
       <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: styles.container.backgroundColor,
+          backgroundColor: '#37353E',
         },
         headerTintColor: '#D3DAD9', 
         headerTitleStyle: {
@@ -21,13 +21,7 @@ export default function RootLayout() {
             title : "CALCULATOR"
           })}
         />
-
-        
-
       </Stack>
-
-  
-
   )
 }
 

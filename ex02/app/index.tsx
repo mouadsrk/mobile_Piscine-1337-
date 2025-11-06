@@ -105,13 +105,6 @@ export default function Index() {
       borderTopColor : "#D7D7D7",
       borderTopWidth : 1 ,
   
-
-      shadowColor: "black",
-      shadowOffset: { width: 2, height: -20 },
-      shadowOpacity: 0.3,
-      shadowRadius: 20,
-
-    elevation: 20,
       
     },
     equaleBackground : {
